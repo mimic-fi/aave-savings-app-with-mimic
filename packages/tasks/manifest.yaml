@@ -1,0 +1,11 @@
+version: 1.0.0
+name: Aave Deposit
+description: Deposit tokens in Aave v3
+inputs:
+  - chainId: uint32
+  - token: address
+  - amount: string          # e.g., '10.5' = 10.5 of the given token
+  - maxFee: string          # e.g., '0.01' = 0.01 of the given token
+abis:
+  - ERC20: ./abis/ERC20.json
+  - AavePool: ./abis/AavePool.json
