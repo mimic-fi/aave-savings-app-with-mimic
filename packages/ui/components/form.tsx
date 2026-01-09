@@ -2,7 +2,7 @@
 
 import { useAccount, useConfig } from 'wagmi'
 import { useState, useEffect } from 'react'
-import { Config, CronTriggerType } from '@mimicprotocol/sdk'
+import { Config } from '@mimicprotocol/sdk'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
