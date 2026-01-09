@@ -9,10 +9,6 @@ export const TOKENS_DICTIONARY: Record<string, Record<string, { address: string;
     USDC: { address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', decimals: 6 },
     USDT: { address: '0xfde4c96c8593536e31f229ea8f37b2ada2699bb2', decimals: 6 },
   },
-  ethereum: {
-    USDC: { address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', decimals: 6 },
-    USDT: { address: '0xdac17f958d2ee523a2206206994597c13d831ec7', decimals: 6 },
-  },
   optimism: {
     USDC: { address: '0x0b2c639c533813f4aa9d7837caf62653d097ff85', decimals: 6 },
     USDT: { address: '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58', decimals: 6 },
