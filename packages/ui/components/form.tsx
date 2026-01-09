@@ -2,6 +2,9 @@
 
 import { useAccount, useConfig } from 'wagmi'
 import { useState, useEffect } from 'react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Settings } from 'lucide-react'
+
 import { Config } from '@mimicprotocol/sdk'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -29,9 +32,10 @@ export function Form() {
   const [chain, setChain] = useState<Chain>(CHAINS.base)
   const [token, setToken] = useState<Token>(TOKENS.base.USDC)
   const [amount, setAmount] = useState('')
-  const [maxFee, setMaxFee] = useState('')
+  const [maxFee, setMaxFee] = useState('0.1')
   const [frequency, setFrequency] = useState<Frequency>('daily')
   const [isLoading, setIsLoading] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const [currentSavingsPlan, setCurrentSavingsPlan] = useState<Config | null>(null)
   const [isLoadingCurrentSavingsPlan, setIsLoadingCurrentSavingsPlan] = useState(false)
   const { isSmartAccount, isSmartAccountLoading } = useSmartAccountCheck(chain)
@@ -196,8 +200,46 @@ export function Form() {
         )}
 
         {!currentSavingsPlan && (
-          <div className="space-y-1">
-            <div className="text-sm font-medium">Set up your savings plan on Aave</div>
+          <div className="space-y-1 flex items-end justify-between">
+            <Label className="text-sm font-medium">Set up your savings plan on Aave</Label>
+            <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10 rounded-xl hover:bg-secondary"
+                  disabled={isFormDisabled}
+                >
+                  <Settings className="h-5 w-5 text-muted-foreground" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md bg-card border-border">
+                <DialogHeader>
+                  <DialogTitle>Settings</DialogTitle>
+                </DialogHeader>
+
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="max-fee-setting" className="text-sm text-muted-foreground">
+                      Max fee
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        id="max-fee-setting"
+                        type="number"
+                        placeholder="0.0"
+                        value={maxFee}
+                        onChange={(e) => setMaxFee(e.target.value)}
+                        className="h-11 bg-secondary/50 border-border"
+                        min="0"
+                      />
+                      <span className="text-muted-foreground">{token.symbol}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Maximum fee you’re willing to pay per execution.</p>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         )}
 
@@ -211,9 +253,6 @@ export function Form() {
             </div>
             <div className="flex-1 min-w-0">
               <Label className="text-muted-foreground">Amount</Label>
-            </div>
-            <div className="flex-1 min-w-0">
-              <Label className="text-muted-foreground">Max fee</Label>
             </div>
           </div>
 
@@ -230,16 +269,6 @@ export function Form() {
                 placeholder="0.0"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="h-12 bg-secondary/50 border-border text-lg text-right"
-                disabled={isFormDisabled}
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <Input
-                type="number"
-                placeholder="0.0"
-                value={maxFee}
-                onChange={(e) => setMaxFee(e.target.value)}
                 className="h-12 bg-secondary/50 border-border text-lg text-right"
                 disabled={isFormDisabled}
               />

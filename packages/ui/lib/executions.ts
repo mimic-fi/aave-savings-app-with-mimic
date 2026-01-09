@@ -25,7 +25,7 @@ export async function findExecutions(signer: string): Promise<Execution[]> {
       const intent = await sdk().intents.getByHash(output.hash)
       return {
         description: config.description,
-        createdAt: config.createdAt,
+        createdAt: execution.createdAt,
         result: intent.status,
         url: `https://protocol.mimic.fi/intents/${intent.hash}`,
       }
