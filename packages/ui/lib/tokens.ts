@@ -15,10 +15,16 @@ export const TOKENS_DICTIONARY: Record<string, Record<string, { address: string;
   },
 }
 
+const TOKEN_ICON_URLS: Record<string, string> = {
+  USDC: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
+  USDT: 'https://cryptologos.cc/logos/tether-usdt-logo.png',
+}
+
 export type Token = {
   address: string
   decimals: number
   symbol: string
+  icon: string
   chainKey: ChainKey
 }
 
@@ -28,7 +34,8 @@ export const TOKENS = Object.keys(TOKENS_DICTIONARY).reduce(
 
     chains[chainKey] = Object.keys(tokensForChain).reduce(
       (tokens, symbol) => {
-        tokens[symbol] = { ...tokensForChain[symbol], symbol, chainKey }
+        const icon = TOKEN_ICON_URLS[symbol]
+        tokens[symbol] = { ...tokensForChain[symbol], symbol, chainKey, icon }
         return tokens
       },
       {} as Record<string, Token>
