@@ -1,5 +1,5 @@
 import { Chains, fp, OpType, randomEvmAddress } from '@mimicprotocol/sdk'
-import { Call, Context, EvmCallQueryMock, runTask } from '@mimicprotocol/test-ts'
+import { Call, Context, EvmCallQueryMock, runFunction } from '@mimicprotocol/test-ts'
 import { expect } from 'chai'
 import { Interface } from 'ethers'
 
@@ -9,8 +9,8 @@ import ERC20Abi from '../abis/ERC20.json'
 const AavePoolInterface = new Interface(AavePool)
 const ERC20Interface = new Interface(ERC20Abi)
 
-describe('Invest Task', () => {
-  const taskDir = './build'
+describe('Invest Function', () => {
+  const buildDir = './build'
 
   describe('when the chain is supported', () => {
     const chainId = Chains.Optimism
@@ -38,7 +38,7 @@ describe('Invest Task', () => {
     ]
 
     it('produces the expected intents', async () => {
-      const result = await runTask(taskDir, context, { inputs, calls })
+      const result = await runFunction(buildDir, context, { inputs, calls })
       expect(result.success).to.be.true
       expect(result.timestamp).to.be.equal(context.timestamp)
 
@@ -97,7 +97,7 @@ describe('Invest Task', () => {
     ]
 
     it('throws an error', async () => {
-      const result = await runTask(taskDir, context, { inputs, calls })
+      const result = await runFunction(buildDir, context, { inputs, calls })
       expect(result.success).to.be.false
       expect(result.intents).to.have.lengthOf(0)
 

@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Settings } from 'lucide-react'
 
-import { Config } from '@mimicprotocol/sdk'
+import { Trigger } from '@mimicprotocol/sdk'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,7 +20,7 @@ import { ToastAction } from '@/components/ui/toast'
 import { useSmartAccountCheck } from '@/hooks/use-smart-account-check'
 
 import { Frequency, CRON_SCHEDULES, invest, deactivate, getFrequencyFromSchedule } from '@/lib/invest'
-import { findCurrentConfig } from '@/lib/executions'
+import { findCurrentTrigger } from '@/lib/functions'
 import { capitalize } from '@/lib/utils'
 
 export function Form() {
@@ -36,7 +36,7 @@ export function Form() {
   const [frequency, setFrequency] = useState<Frequency>('daily')
   const [isLoading, setIsLoading] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const [currentSavingsPlan, setCurrentSavingsPlan] = useState<Config | null>(null)
+  const [currentSavingsPlan, setCurrentSavingsPlan] = useState<Trigger | null>(null)
   const [isLoadingCurrentSavingsPlan, setIsLoadingCurrentSavingsPlan] = useState(false)
   const { isSmartAccount, isSmartAccountLoading } = useSmartAccountCheck(chain)
   const isFormDisabled = isLoadingCurrentSavingsPlan || !!currentSavingsPlan
@@ -56,10 +56,10 @@ export function Form() {
         }
 
         setIsLoadingCurrentSavingsPlan(true)
-        const config = await findCurrentConfig(address)
-        setCurrentSavingsPlan(config)
+        const trigger = await findCurrentTrigger(address)
+        setCurrentSavingsPlan(trigger)
       } catch (error) {
-        console.error('Error fetching savings plan config', error)
+        console.error('Error fetching savings plan trigger', error)
         setCurrentSavingsPlan(null)
       } finally {
         setIsLoadingCurrentSavingsPlan(false)
@@ -72,8 +72,8 @@ export function Form() {
   useEffect(() => {
     if (!currentSavingsPlan) return
 
-    const trigger = currentSavingsPlan.trigger as unknown as { schedule: string }
-    const frequencyFound = getFrequencyFromSchedule(trigger.schedule)
+    const config = currentSavingsPlan.config as unknown as { schedule: string }
+    const frequencyFound = getFrequencyFromSchedule(config.schedule)
     if (frequencyFound) setFrequency(frequencyFound)
 
     const inputs = currentSavingsPlan.input
@@ -110,7 +110,7 @@ export function Form() {
     setIsLoading(true)
     try {
       const params = { chain, token, amount, maxFee, frequency, signer }
-      const config = await invest(params)
+      const trigger = await invest(params)
 
       toast({
         title: 'Savings Plan Activated',
@@ -118,14 +118,14 @@ export function Form() {
         action: (
           <ToastAction
             altText="View config"
-            onClick={() => window.open(`https://protocol.mimic.fi/configs/${config.sig}`, '_blank')}
+            onClick={() => window.open(`https://protocol.mimic.fi/triggers/${trigger.sig}`, '_blank')}
           >
             View
           </ToastAction>
         ),
       })
 
-      setCurrentSavingsPlan(config)
+      setCurrentSavingsPlan(trigger)
     } catch (error) {
       toast({
         title: 'Activation Failed',
@@ -142,7 +142,7 @@ export function Form() {
     setIsLoading(true)
 
     try {
-      const params = { config: currentSavingsPlan, signer }
+      const params = { trigger: currentSavingsPlan, signer }
       await deactivate(params)
 
       toast({
@@ -189,7 +189,7 @@ export function Form() {
           <div className="flex items-center gap-2">
             <div className="text-sm font-medium">Current Aave savings plan detected</div>
             <a
-              href={`https://protocol.mimic.fi/configs/${currentSavingsPlan.sig}`}
+              href={`https://protocol.mimic.fi/triggers/${currentSavingsPlan.sig}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-violet-500 hover:text-violet-400 transition-colors"
@@ -307,7 +307,7 @@ export function Form() {
         ) : (
           <Button
             size="lg"
-            className="w-full text-lg h-14 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
+            className="w-full text-lg h-14 bg-linear-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
             onClick={handleActivate}
             disabled={isLoading || !isConnected || !isSmartAccount}
           >

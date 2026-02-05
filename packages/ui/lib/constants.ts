@@ -1,2 +1,2 @@
-export const TASK_CID = process.env.NEXT_PUBLIC_INVEST_TASK_CID!
+export const FUNCTION_CID = process.env.NEXT_PUBLIC_INVEST_FUNCTION_CID!
 export const EIP7702_SMART_ACCOUNT = '0xef0100657d65655a263cabc155f1d94507fad9f03d69a3'

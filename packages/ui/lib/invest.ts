@@ -1,10 +1,10 @@
-import { fp, Config, TriggerType } from '@mimicprotocol/sdk'
+import { fp, Trigger, TriggerType } from '@mimicprotocol/sdk'
 import { Chain } from '@/lib/chains'
 import { Token } from '@/lib/tokens'
 import sdk from '@/lib/sdk'
 import { WagmiSigner } from '@/lib/wagmi-signer'
-import { TASK_CID } from '@/lib/constants'
-import { findCurrentConfig } from '@/lib/executions'
+import { FUNCTION_CID } from '@/lib/constants'
+import { findCurrentTrigger } from '@/lib/functions'
 
 interface InvestParams {
   chain: Chain
@@ -16,7 +16,7 @@ interface InvestParams {
 }
 
 interface DeactivateParams {
-  config: Config
+  trigger: Trigger
   signer: WagmiSigner
 }
 
@@ -42,24 +42,24 @@ function bumpPatch(version: string): string {
   return `${major}.${minor}.${Number(patch) + 1}`
 }
 
-export async function deactivate(params: DeactivateParams): Promise<Config> {
-  const { config, signer } = params
-  return sdk().configs.signAndDeactivate(config.sig, signer)
+export async function deactivate(params: DeactivateParams): Promise<Trigger> {
+  const { trigger, signer } = params
+  return sdk().triggers.signAndDeactivate(trigger.sig, signer)
 }
 
-export async function invest(params: InvestParams): Promise<Config> {
+export async function invest(params: InvestParams): Promise<Trigger> {
   const { chain, token, amount, maxFee, frequency, signer } = params
   const description = `Invest ${amount} ${token.symbol} on ${chain.name} ${frequency}`
-  const manifest = await sdk().tasks.getManifest(TASK_CID)
-  const config = (await findCurrentConfig(signer.address)) || (await findCurrentConfig(signer.address, false))
-  const version = config ? bumpPatch(config.version) : '0.0.1'
-  return sdk().configs.signAndCreate(
+  const manifest = await sdk().functions.getManifest(FUNCTION_CID)
+  const trigger = (await findCurrentTrigger(signer.address)) || (await findCurrentTrigger(signer.address, false))
+  const version = trigger ? bumpPatch(trigger.version) : '0.0.1'
+  return sdk().triggers.signAndCreate(
     {
-      taskCid: TASK_CID,
+      functionCid: FUNCTION_CID,
       version,
       manifest,
       description,
-      trigger: {
+      config: {
         type: TriggerType.Cron,
         schedule: CRON_SCHEDULES[frequency],
         delta: '10m',
