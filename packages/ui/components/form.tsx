@@ -117,7 +117,7 @@ export function Form() {
         description: 'Your savings plan has been created successfully',
         action: (
           <ToastAction
-            altText="View config"
+            altText="View"
             onClick={() => window.open(`https://protocol.mimic.fi/triggers/${trigger.sig}`, '_blank')}
           >
             View
@@ -152,7 +152,6 @@ export function Form() {
 
       setCurrentSavingsPlan(null)
       setAmount('')
-      setMaxFee('')
     } catch (error) {
       toast({
         title: 'Deactivation Failed',
@@ -245,6 +244,8 @@ export function Form() {
                         onChange={(e) => setMaxFee(e.target.value)}
                         className="h-11 bg-secondary/50 border-border"
                         min="0"
+                        step="0.01"
+                        disabled={isFormDisabled}
                       />
                       <span className="text-muted-foreground">{token.symbol}</span>
                     </div>
